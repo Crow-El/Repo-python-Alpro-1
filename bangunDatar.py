@@ -1,6 +1,6 @@
 import math
 import time
-
+# WAssap
 # Fungsi untuk mencari panjang Persegi Panjang
 def cari_panjang_persegi_panjang(lebar, luas, keliling):
     if lebar is not None and luas is not None:
