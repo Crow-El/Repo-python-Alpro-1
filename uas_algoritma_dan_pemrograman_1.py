@@ -8,7 +8,6 @@ Original file is located at
 """
 
 # Black box
-
 import time
 
 class Mahasiswa:
@@ -156,9 +155,9 @@ def main():
 if __name__ == "__main__":
     main()
 
+
+
 # Copilot AI
-
-
 class Mahasiswa:
     def __init__(self, nama):
         self.nama = nama
