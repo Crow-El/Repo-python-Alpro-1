@@ -155,3 +155,125 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Copilot AI
+
+
+class Mahasiswa:
+    def __init__(self, nama):
+        self.nama = nama
+        self.matkul = []
+
+
+    def tambah_matkul(self, mata_kuliah):
+        self.matkul.append(mata_kuliah)
+
+
+    def hapus_matkul(self, mata_kuliah):
+        if mata_kuliah in self.matkul:
+            self.matkul.remove(mata_kuliah)
+
+
+    def lihat_matkul(self):
+        return self.matkul
+
+
+    def edit_matkul(self, matkul_lama, matkul_baru):
+        self.hapus_matkul(matkul_lama)
+        self.tambah_matkul(matkul_baru)
+
+
+class SistemKRS:
+    def __init__(self):
+        self.mahasiswa = []
+        self.daftar_matkul = []
+
+
+    def tambah_mahasiswa(self, nama):
+        mahasiswa = Mahasiswa(nama)
+        self.mahasiswa.append(mahasiswa)
+
+
+    def lihat_mahasiswa(self):
+        return [mhs.nama for mhs in self.mahasiswa]
+
+
+    def tambah_mata_kuliah(self, mata_kuliah):
+        self.daftar_matkul.append(mata_kuliah)
+
+
+    def pilih_matkul(self, nama_mahasiswa, mata_kuliah):
+        for mhs in self.mahasiswa:
+            if mhs.nama == nama_mahasiswa:
+                mhs.tambah_matkul(mata_kuliah)
+
+
+    def edit_matkul(self, nama_mahasiswa, matkul_lama, matkul_baru):
+        for mhs in self.mahasiswa:
+            if mhs.nama == nama_mahasiswa:
+                mhs.edit_matkul(matkul_lama, matkul_baru)
+
+
+    def lihat_matkul_mahasiswa(self, nama_mahasiswa):
+        for mhs in self.mahasiswa:
+            if mhs.nama == nama_mahasiswa:
+                return mhs.lihat_matkul()
+
+
+    def daftar_pilih_matkul(self, nama_mahasiswa):
+        for mhs in self.mahasiswa:
+            if mhs.nama == nama_mahasiswa:
+                print("Daftar Mata Kuliah:")
+                for i, matkul in enumerate(self.daftar_matkul):
+                    print(f"{i + 1}. {matkul}")
+                pilihan = int(input("Pilih nomor mata kuliah: ")) - 1
+                if 0 <= pilihan < len(self.daftar_matkul):
+                    mhs.tambah_matkul(self.daftar_matkul[pilihan])
+                else:
+                    print("Pilihan tidak valid.")
+
+
+sistem = SistemKRS()
+
+
+def menu():
+    while True:
+        print("\nMenu:")
+        print("1. Tambah Mahasiswa")
+        print("2. Lihat Daftar Mahasiswa")
+        print("3. Tambah Mata Kuliah")
+        print("4. Edit Mata Kuliah")
+        print("5. Lihat Mata Kuliah Mahasiswa")
+        print("6. Daftar Pilih Mata Kuliah")
+        print("7. Keluar")
+        pilihan = input("Pilih opsi: ")
+
+
+        if pilihan == '1':
+            nama = input("Masukkan nama mahasiswa: ")
+            sistem.tambah_mahasiswa(nama)
+        elif pilihan == '2':
+            print("Daftar Mahasiswa:", sistem.lihat_mahasiswa())
+        elif pilihan == '3':
+            matkul = input("Masukkan mata kuliah: ")
+            sistem.tambah_mata_kuliah(matkul)
+        elif pilihan == '4':
+            nama = input("Masukkan nama mahasiswa: ")
+            matkul_lama = input("Masukkan mata kuliah lama: ")
+            matkul_baru = input("Masukkan mata kuliah baru: ")
+            sistem.edit_matkul(nama, matkul_lama, matkul_baru)
+        elif pilihan == '5':
+            nama = input("Masukkan nama mahasiswa: ")
+            print("Mata Kuliah yang dipilih:", sistem.lihat_matkul_mahasiswa(nama))
+        elif pilihan == '6':
+            nama = input("Masukkan nama mahasiswa: ")
+            sistem.daftar_pilih_matkul(nama)
+        elif pilihan == '7':
+            break
+        else:
+            print("Pilihan tidak valid, coba lagi.")
+
+
+menu()
+
+
