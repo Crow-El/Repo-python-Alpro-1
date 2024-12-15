@@ -147,122 +147,247 @@ if __name__ == "__main__":
     main()
 
 # Copilot AI
-class Mahasiswa:
-    def __init__(self, nama):
-        self.nama = nama
-        self.matkul = []
+import time
 
+# Variabel global untuk menyimpan data
+data_mahasiswa = []  # Array untuk menyimpan data mahasiswa
+matkul_umum = []     # Array untuk menyimpan mata kuliah umum (diinput oleh dosen)
 
-    def tambah_matkul(self, mata_kuliah):
-        self.matkul.append(mata_kuliah)
+def penghitung_waktu(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()  # Menggunakan perf_counter untuk presisi tinggi
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        print(f"\nWaktu eksekusi {func._name_}: {(end_time - start_time) * 1000:.4f} ms")
+        return result
+    return wrapper
 
-
-    def hapus_matkul(self, mata_kuliah):
-        if mata_kuliah in self.matkul:
-            self.matkul.remove(mata_kuliah)
-
-
-    def lihat_matkul(self):
-        return self.matkul
-
-
-    def edit_matkul(self, matkul_lama, matkul_baru):
-        self.hapus_matkul(matkul_lama)
-        self.tambah_matkul(matkul_baru)
-
-
-class SistemKRS:
-    def __init__(self):
-        self.mahasiswa = []
-        self.daftar_matkul = []
-
-
-    def tambah_mahasiswa(self, nama):
-        mahasiswa = Mahasiswa(nama)
-        self.mahasiswa.append(mahasiswa)
-
-
-    def lihat_mahasiswa(self):
-        return [mhs.nama for mhs in self.mahasiswa]
-
-
-    def tambah_mata_kuliah(self, mata_kuliah):
-        self.daftar_matkul.append(mata_kuliah)
-
-
-    def pilih_matkul(self, nama_mahasiswa, mata_kuliah):
-        for mhs in self.mahasiswa:
-            if mhs.nama == nama_mahasiswa:
-                mhs.tambah_matkul(mata_kuliah)
-
-
-    def edit_matkul(self, nama_mahasiswa, matkul_lama, matkul_baru):
-        for mhs in self.mahasiswa:
-            if mhs.nama == nama_mahasiswa:
-                mhs.edit_matkul(matkul_lama, matkul_baru)
-
-
-    def lihat_matkul_mahasiswa(self, nama_mahasiswa):
-        for mhs in self.mahasiswa:
-            if mhs.nama == nama_mahasiswa:
-                return mhs.lihat_matkul()
-
-
-    def daftar_pilih_matkul(self, nama_mahasiswa):
-        for mhs in self.mahasiswa:
-            if mhs.nama == nama_mahasiswa:
-                print("Daftar Mata Kuliah:")
-                for i, matkul in enumerate(self.daftar_matkul):
-                    print(f"{i + 1}. {matkul}")
-                pilihan = int(input("Pilih nomor mata kuliah: ")) - 1
-                if 0 <= pilihan < len(self.daftar_matkul):
-                    mhs.tambah_matkul(self.daftar_matkul[pilihan])
-                else:
-                    print("Pilihan tidak valid.")
-
-
-sistem = SistemKRS()
-
-
-def menu():
+@penghitung_waktu
+def menu_utama():
     while True:
-        print("\nMenu:")
-        print("1. Tambah Mahasiswa")
-        print("2. Lihat Daftar Mahasiswa")
-        print("3. Tambah Mata Kuliah")
-        print("4. Edit Mata Kuliah")
-        print("5. Lihat Mata Kuliah Mahasiswa")
-        print("6. Daftar Pilih Mata Kuliah")
-        print("7. Keluar")
+        print("\n=== Sistem KRS ===")
+        print("1. Masuk sebagai Mahasiswa")
+        print("2. Masuk sebagai Dosen")
+        print("3. Keluar")
         pilihan = input("Pilih opsi: ")
 
+        if pilihan == '1':
+            menu_mahasiswa()
+        elif pilihan == '2':
+            menu_dosen()
+        elif pilihan == '3':
+            print("Program selesai.")
+            break
+        else:
+            print("Pilihan tidak valid. Coba lagi.")
+
+@penghitung_waktu
+def menu_mahasiswa():
+    print("\n=== Menu Mahasiswa ===")
+    nama = input("Masukkan nama Anda: ")
+    mahasiswa = next((m for m in data_mahasiswa if m['nama'] == nama), None)
+    if not mahasiswa:
+        print("Nama Anda belum terdaftar. Silakan hubungi dosen untuk pendaftaran.")
+        return
+
+    while True:
+        print("\n1. Lihat daftar mata kuliah")
+        print("2. Ubah daftar mata kuliah yang dipilih")
+        print("3. Kembali ke menu utama")
+        pilihan = input("Pilih opsi: ")
+
+        if pilihan == '1':
+            lihat_matkul(mahasiswa)
+        elif pilihan == '2':
+            ubah_matkul(mahasiswa)
+        elif pilihan == '3':
+            break
+        else:
+            print("Pilihan tidak valid. Coba lagi.")
+
+@penghitung_waktu
+def lihat_matkul(mahasiswa):
+    print("\nDaftar mata kuliah umum yang tersedia:")
+    for i, matkul in enumerate(matkul_umum, start=1):
+        print(f"{i}. {matkul}")
+
+    print("\nDaftar mata kuliah yang Anda pilih:")
+    for i, matkul in enumerate(mahasiswa["matkul"], start=1):
+        print(f"{i}. {matkul}")
+
+@penghitung_waktu
+def ubah_matkul(mahasiswa):
+    while True:
+        print("\n1. Tambah mata kuliah")
+        print("2. Hapus mata kuliah")
+        print("3. Edit mata kuliah")
+        print("4. Kembali")
+        pilihan = input("Pilih opsi: ")
+
+        if pilihan == '1':
+            tambah_matkul(mahasiswa)
+        elif pilihan == '2':
+            hapus_matkul(mahasiswa)
+        elif pilihan == '3':
+            edit_matkul(mahasiswa)
+        elif pilihan == '4':
+            break
+        else:
+            print("Pilihan tidak valid. Coba lagi.")
+
+@penghitung_waktu
+def tambah_matkul(mahasiswa):
+    print("\nPilih mata kuliah untuk ditambahkan:")
+    for i, matkul in enumerate(matkul_umum, start=1):
+        print(f"{i}. {matkul}")
+
+    try:
+        pilihan = int(input("Masukkan nomor mata kuliah: "))
+        if 1 <= pilihan <= len(matkul_umum):
+            matkul = matkul_umum[pilihan - 1]
+            if matkul not in mahasiswa["matkul"]:
+                mahasiswa["matkul"].append(matkul)
+                print(f"Mata kuliah {matkul} berhasil ditambahkan.")
+            else:
+                print("Mata kuliah sudah ada dalam daftar Anda.")
+        else:
+            print("Pilihan tidak valid.")
+    except ValueError:
+        print("Input harus berupa angka.")
+
+@penghitung_waktu
+def hapus_matkul(mahasiswa):
+    print("\nPilih mata kuliah untuk dihapus:")
+    for i, matkul in enumerate(mahasiswa["matkul"], start=1):
+        print(f"{i}. {matkul}")
+
+    try:
+        pilihan = int(input("Masukkan nomor mata kuliah: "))
+        if 1 <= pilihan <= len(mahasiswa["matkul"]):
+            matkul = mahasiswa["matkul"].pop(pilihan - 1)
+            print(f"Mata kuliah {matkul} berhasil dihapus.")
+        else:
+            print("Pilihan tidak valid.")
+    except ValueError:
+        print("Input harus berupa angka.")
+
+@penghitung_waktu
+def edit_matkul(mahasiswa):
+    print("\nPilih mata kuliah untuk diedit:")
+    for i, matkul in enumerate(mahasiswa["matkul"], start=1):
+        print(f"{i}. {matkul}")
+
+    try:
+        pilihan = int(input("Masukkan nomor mata kuliah: "))
+        if 1 <= pilihan <= len(mahasiswa["matkul"]):
+            matkul_baru = input("Masukkan nama mata kuliah baru: ")
+            mahasiswa["matkul"][pilihan - 1] = matkul_baru
+            print("Mata kuliah berhasil diubah.")
+        else:
+            print("Pilihan tidak valid.")
+    except ValueError:
+        print("Input harus berupa angka.")
+
+@penghitung_waktu
+def menu_dosen():
+    while True:
+        print("\n=== Menu Dosen ===")
+        print("1. Pemilihan fungsi perwalian")
+        print("2. Melihat data mahasiswa")
+        print("3. Kembali ke menu utama")
+        pilihan = input("Pilih opsi: ")
+
+        if pilihan == '1':
+            fungsi_perwalian()
+        elif pilihan == '2':
+            lihat_data_mahasiswa()
+        elif pilihan == '3':
+            break
+        else:
+            print("Pilihan tidak valid. Coba lagi.")
+
+@penghitung_waktu
+def fungsi_perwalian():
+    while True:
+        print("\n1. Tambah nama mahasiswa")
+        print("2. Tambah mata kuliah umum")
+        print("3. Kembali")
+        pilihan = input("Pilih opsi: ")
 
         if pilihan == '1':
             nama = input("Masukkan nama mahasiswa: ")
-            sistem.tambah_mahasiswa(nama)
+            data_mahasiswa.append({"nama": nama, "matkul": []})
+            print("Mahasiswa berhasil ditambahkan.")
         elif pilihan == '2':
-            print("Daftar Mahasiswa:", sistem.lihat_mahasiswa())
+            matkul = input("Masukkan nama mata kuliah umum: ")
+            if matkul not in matkul_umum:
+                matkul_umum.append(matkul)
+                print("Mata kuliah berhasil ditambahkan.")
+            else:
+                print("Mata kuliah sudah ada dalam daftar.")
         elif pilihan == '3':
-            matkul = input("Masukkan mata kuliah: ")
-            sistem.tambah_mata_kuliah(matkul)
-        elif pilihan == '4':
-            nama = input("Masukkan nama mahasiswa: ")
-            matkul_lama = input("Masukkan mata kuliah lama: ")
-            matkul_baru = input("Masukkan mata kuliah baru: ")
-            sistem.edit_matkul(nama, matkul_lama, matkul_baru)
-        elif pilihan == '5':
-            nama = input("Masukkan nama mahasiswa: ")
-            print("Mata Kuliah yang dipilih:", sistem.lihat_matkul_mahasiswa(nama))
-        elif pilihan == '6':
-            nama = input("Masukkan nama mahasiswa: ")
-            sistem.daftar_pilih_matkul(nama)
-        elif pilihan == '7':
             break
         else:
-            print("Pilihan tidak valid, coba lagi.")
+            print("Pilihan tidak valid. Coba lagi.")
 
+@penghitung_waktu
+def lihat_data_mahasiswa():
+    while True:
+        print("\n1. Hapus data mahasiswa")
+        print("2. Edit data mahasiswa")
+        print("3. Lihat daftar mahasiswa")
+        print("4. Kembali")
+        pilihan = input("Pilih opsi: ")
 
-menu()
+        if pilihan == '1':
+            hapus_data_mahasiswa()
+        elif pilihan == '2':
+            edit_data_mahasiswa()
+        elif pilihan == '3':
+            print("\nDaftar mahasiswa:")
+            for i, mhs in enumerate(data_mahasiswa, start=1):
+                print(f"{i}. {mhs['nama']}")
+        elif pilihan == '4':
+            break
+        else:
+            print("Pilihan tidak valid. Coba lagi.")
+
+@penghitung_waktu
+def hapus_data_mahasiswa():
+    print("\nPilih mahasiswa untuk dihapus:")
+    for i, mhs in enumerate(data_mahasiswa, start=1):
+        print(f"{i}. {mhs['nama']}")
+
+    try:
+        pilihan = int(input("Masukkan nomor mahasiswa: "))
+        if 1 <= pilihan <= len(data_mahasiswa):
+            mahasiswa = data_mahasiswa.pop(pilihan - 1)
+            print(f"Data mahasiswa {mahasiswa['nama']} berhasil dihapus.")
+        else:
+            print("Pilihan tidak valid.")
+    except ValueError:
+        print("Input harus berupa angka.")
+
+@penghitung_waktu
+def edit_data_mahasiswa():
+    print("\nPilih mahasiswa untuk diedit:")
+    for i, mhs in enumerate(data_mahasiswa, start=1):
+        print(f"{i}. {mhs['nama']}")
+    try:
+        pilihan = int(input("Masukkan nomor mahasiswa: "))
+        if 1 <= pilihan <= len(data_mahasiswa):
+            mahasiswa = data_mahasiswa[pilihan - 1]
+            nama_baru = input(f"Masukkan nama baru untuk {mahasiswa['nama']}: ")
+            mahasiswa['nama'] = nama_baru
+            print(f"Nama mahasiswa berhasil diubah menjadi {nama_baru}.")
+        else:
+            print("Pilihan tidak valid.")
+    except ValueError:
+        print("Input harus berupa angka.")
+
+# Jalankan program utama
+menu_utama()
+
 
 
 # Chat-GPT
